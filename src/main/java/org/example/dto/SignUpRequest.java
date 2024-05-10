@@ -1,2 +1,11 @@
-package org.example.dto;public class SignUpRequest {
+package org.example.dto;
+
+import lombok.Data;
+
+@Data
+public class SignUpRequest {
+    private String username;
+    private String password;
+    private String name;
+    private String age;
 }

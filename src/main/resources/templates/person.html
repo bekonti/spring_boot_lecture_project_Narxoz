@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Person Page</title>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="#">Navbar</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        Dropdown
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                </li>
+            </ul>
+            <form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+
+    <h1>Welcome to our page
+        <span th:style="'color:' + ${color}">
+            test
+        </span>
+    </h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th> id</th>
+            <th> name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${persons.empty}">
+            <td colspan="2"> No Persons Available</td>
+        </tr>
+        <tr th:each="person : ${persons}">
+            <td><span th:text="${person.id}"> ID </span></td>
+            <td><span th:text="${person.name}"> NAME </span></td>
+            <td>
+                <button type="button"
+                        class="btn btn-primary"
+                        data-bs-toggle="modal"
+                        th:id="'modal' + ${person.id}"
+                        th:data-bs-target="'#modal'+${person.id}"
+                >
+                    <!--                th:attr="onclick=|getDevices('${person.id}')|"-->
+                    <!--                        th:onclick="getDevices(${person.id})"-->
+
+                    Devices
+                </button>
+            </td>
+
+            <!-- Modal -->
+            <div class="modal fade" th:id="'modal' + ${person.id}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel" th:text="${person.name}"></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p th:if="${person.devices.empty}">No Device Available</p>
+                            <p th:each="device : ${person.devices}">
+                                <span th:text="${device.id}"> ID </span>
+                                <span th:text="${device.name}"> NAME </span>
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function getDevices(id) {
+        // alert("works");
+
+        var xhr = new XMLHttpRequest(); // Create XMLHttpRequest object
+
+        // Configure the request
+        xhr.open('GET', 'https://api.example.com/data', true); // Specify the URL and method
+
+        xhr.onload = function () {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                // Request was successful, handle the response
+                console.log(xhr.responseText); // Log the response to the console
+            } else {
+                // Request failed
+                console.error('Request failed with status:', xhr.status);
+            }
+        };
+
+        // Define what happens in case of an error
+        xhr.onerror = function () {
+            console.error('Request failed');
+        };
+
+        // $.ajax({
+        //     url: 'http://localhost:8081/device?personId='+id,         /* Куда отправить запрос */
+        //     method: 'get',             /* Метод запроса (post или get) */
+        //     dataType: 'json',          /* Тип данных в ответе (xml, json, script, html). */
+        //     data: {text: 'Текст'},     /* Данные передаваемые в массиве */
+        // success: function (data) {   /* функция которая будет выполнена после успешного запроса.  */
+        //     alert(data); /* В переменной data содержится ответ от index.php. */
+        // },
+        // error: function (data){
+        //     alert("ERROR");
+        // }
+        // });
+    }
+
+</script>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/cesiumjs/1.78/Build/Cesium/Cesium.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+</body>
+</html>
